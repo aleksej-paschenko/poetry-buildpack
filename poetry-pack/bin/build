@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# GET ARGS
+layersdir=$1
+
+# CREATE THE LAYER DIRECTORY
+dir="$layersdir"/poetry
+mkdir -p "$dir"
+
+# DOWNLOAD POETRY
+echo "---> Downloading and extracting poetry"
+export POETRY_HOME=$dir
+curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+
+# MAKE POETRY AVAILABLE TO THIS SCRIPT
+export PATH="$dir"/bin:$PATH
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH:+${LD_LIBRARY_PATH}:}"$dir/lib"
+
+echo "---> Export requirements.txt"
+poetry export -f requirements.txt --output requirements.txt
+
+
